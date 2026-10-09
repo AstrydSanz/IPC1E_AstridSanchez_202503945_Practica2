@@ -3,7 +3,6 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        // Instanciamos nuestro sistema de registro con capacidad para 20 pilotos
         RegistroSistema sistema = new RegistroSistema(20);
         
         int opcion = 0;
@@ -15,12 +14,12 @@ public class Main {
             System.out.println("1. Jugar");
             System.out.println("2. Crear / Registrar Piloto");
             System.out.println("3. Top de Puntajes (Historial)");
-            System.out.println("4. Salir");
+            System.out.println("4. Generar Reporte HTML");
+            System.out.println("5. Salir");
             System.out.print("Seleccione una opción: ");
-
             if (scanner.hasNextInt()) {
                 opcion = scanner.nextInt();
-                scanner.nextLine(); // Limpiar el buffer
+                scanner.nextLine();
 
                 switch (opcion) {
                     case 1:
@@ -34,7 +33,6 @@ public class Main {
                             break;
                         }
 
-                        // Menú de selección de nave / dificultad
                         System.out.println("\nSeleccione el modelo de nave y dificultad:");
                         System.out.println("1. Explorador (Fácil - Disparo cada 2s)");
                         System.out.println("2. Caza Estelar (Normal - Disparo cada 1s)");
@@ -46,10 +44,9 @@ public class Main {
 
                         System.out.println("\n>> ¡Iniciando simulación gráfica para " + pilotoEncontrado.getNombre() + "!");
                         
-                        // Lanzamos la ventana gráfica
                         javax.swing.SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
-                                new VentanaJuego(pilotoEncontrado, naveSeleccionada).setVisible(true);
+                                new VentanaJuego(pilotoEncontrado, naveSeleccionada, sistema).setVisible(true);
                             }
                         });
                         break;
@@ -65,10 +62,21 @@ public class Main {
                         break;
 
                     case 3:
-                        sistema.mostrarPilotos();
+                        sistema.mostrarTopPuntajes();
                         break;
 
                     case 4:
+                        System.out.println("\n--- GENERANDO REPORTE DEL SISTEMA ---");
+                        GeneradorReportes.exportarReporteHTML(
+                            sistema.getListaPilotos(), 
+                            sistema.getTotalPilotos(), 
+                            sistema.getHistorialPartidas(), 
+                            sistema.getTotalPartidas()
+                        );
+
+                        break;
+                        
+                    case 5:    
                         System.out.println("\n¡Gracias por jugar Quetzal Space Defender! Saliendo del sistema...");
                         break;
 
@@ -78,22 +86,21 @@ public class Main {
                 }
             } else {
                 System.out.println("\n[Error] Por favor, ingrese un valor numérico válido.");
-                scanner.next(); // Limpiar entrada incorrecta
+                scanner.next();
             }
 
-        } while (opcion != 4);
+        } while (opcion != 5);
 
         scanner.close();
     }
 
-    // Método auxiliar seguro para leer enteros sin romper la consola
     private static int solicitarEntero(Scanner scanner) {
         while (!scanner.hasNextInt()) {
             System.out.print("[Error] Ingrese un valor numérico válido: ");
             scanner.next();
         }
         int val = scanner.nextInt();
-        scanner.nextLine(); // Limpiar buffer
+        scanner.nextLine();
         return val;
     }
 }

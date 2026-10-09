@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Random;
 
 public class PanelJuego extends JPanel implements ActionListener, KeyListener {
     private Timer timer;
@@ -13,22 +14,38 @@ public class PanelJuego extends JPanel implements ActionListener, KeyListener {
     
     private Enemigo[] enemigos;
     private int totalEnemigos;
+
+    private ObjetoEspecial[] especiales;
+    private int totalEspeciales;
     
     private int puntaje;
     private Nave nave;
+    private Piloto piloto;
+    private RegistroSistema sistema;
     private boolean juegoTerminado;
+    private boolean partidaRegistrada;
+    private int tiempoRalentizado; // Contador para el efecto del asteroide (2 segundos)
+    private Random random;
 
-    public PanelJuego(Nave nave) {
+    public PanelJuego(Nave nave, Piloto piloto, RegistroSistema sistema) {
         this.nave = nave;
+        this.piloto = piloto;
+        this.sistema = sistema;
         this.playerY = 250;
         this.puntaje = 0;
         this.juegoTerminado = false;
+        this.partidaRegistrada = false;
+        this.tiempoRalentizado = 0;
+        this.random = new Random();
         
         this.proyectiles = new Proyectil[100];
         this.totalProyectiles = 0;
         
         this.enemigos = new Enemigo[20];
         this.totalEnemigos = 0;
+
+        this.especiales = new ObjetoEspecial[10];
+        this.totalEspeciales = 0;
 
         setBackground(Color.BLACK);
         setFocusable(true);
@@ -37,22 +54,30 @@ public class PanelJuego extends JPanel implements ActionListener, KeyListener {
         timer = new Timer(20, this);
         timer.start();
         
-        // Generar enemigos iniciales
-        generarEnemigosIniciales();
+        generarElementosIniciales();
     }
 
-    private void generarEnemigosIniciales() {
+    private void generarElementosIniciales() {
         if (totalEnemigos < enemigos.length) {
             enemigos[totalEnemigos] = new Enemigo(800, 100);
             totalEnemigos++;
         }
         if (totalEnemigos < enemigos.length) {
-            enemigos[totalEnemigos] = new Enemigo(900, 300);
+            enemigos[totalEnemigos] = new Enemigo(900, 350);
             totalEnemigos++;
         }
-        if (totalEnemigos < enemigos.length) {
-            enemigos[totalEnemigos] = new Enemigo(1000, 450);
-            totalEnemigos++;
+        // Generar elementos especiales iniciales
+        if (totalEspeciales < especiales.length) {
+            especiales[totalEspeciales] = new ObjetoEspecial(1000, 200, "energia");
+            totalEspeciales++;
+        }
+        if (totalEspeciales < especiales.length) {
+            especiales[totalEspeciales] = new ObjetoEspecial(1200, 450, "asteroide");
+            totalEspeciales++;
+        }
+        if (totalEspeciales < especiales.length) {
+            especiales[totalEspeciales] = new ObjetoEspecial(1400, 150, "capsula");
+            totalEspeciales++;
         }
     }
 
@@ -72,13 +97,17 @@ public class PanelJuego extends JPanel implements ActionListener, KeyListener {
         }
 
         // Dibujar Nave del Jugador
-        g.setColor(Color.CYAN);
+        g.setColor(tiempoRalentizado > 0 ? Color.ORANGE : Color.CYAN);
         g.fillRect(50, playerY, 40, 25);
         
         // Información en pantalla
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 14));
         g.drawString("Nave: " + nave.getTipoNave() + " | Puntaje: " + puntaje, 15, 20);
+        if (tiempoRalentizado > 0) {
+            g.setColor(Color.YELLOW);
+            g.drawString("[!] ¡BLOQUEADO POR ASTEROIDE!", 350, 20);
+        }
 
         // Dibujar Proyectiles
         g.setColor(Color.YELLOW);
@@ -95,17 +124,36 @@ public class PanelJuego extends JPanel implements ActionListener, KeyListener {
                 g.fillRect(enemigos[i].getX(), enemigos[i].getY(), 30, 30);
             }
         }
+
+        // Dibujar Objetos Especiales
+        for (int i = 0; i < totalEspeciales; i++) {
+            if (especiales[i] != null && especiales[i].isActivo()) {
+                String tipo = especiales[i].getTipo();
+                if (tipo.equals("energia")) {
+                    g.setColor(Color.GREEN);
+                    g.fillOval(especiales[i].getX(), especiales[i].getY(), 25, 25);
+                } else if (tipo.equals("asteroide")) {
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRoundRect(especiales[i].getX(), especiales[i].getY(), 30, 30, 10, 10);
+                } else if (tipo.equals("capsula")) {
+                    g.setColor(Color.MAGENTA);
+                    g.fillRect(especiales[i].getX(), especiales[i].getY(), 20, 20);
+                }
+            }
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (juegoTerminado) return;
 
-        // Movimiento de la nave
-        if (arriba && playerY > 40) playerY -= 5;
-        if (abajo && playerY < 500) playerY += 5;
+        if (tiempoRalentizado > 0) {
+            tiempoRalentizado--;
+        } else {
+            if (arriba && playerY > 40) playerY -= 5;
+            if (abajo && playerY < 500) playerY += 5;
+        }
 
-        // Actualizar posiciones de proyectiles
         for (int i = 0; i < totalProyectiles; i++) {
             if (proyectiles[i] != null && proyectiles[i].isActivo()) {
                 proyectiles[i].mover();
@@ -115,26 +163,27 @@ public class PanelJuego extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        // Actualizar posiciones de enemigos y verificar colisiones
         for (int i = 0; i < totalEnemigos; i++) {
             if (enemigos[i] != null && enemigos[i].isActivo()) {
                 enemigos[i].mover();
 
-                // 1. Colisión entre Nave y Enemigo (Condición de Derrota)
-                // Rectángulo del jugador: x=50, y=playerY, ancho=40, alto=25
-                // Rectángulo del enemigo: x=enemigos[i].getX(), y=enemigos[i].getY(), ancho=30, alto=30
+                // Colisión Nave - Enemigo (Derrota)
                 if (50 < enemigos[i].getX() + 30 && 50 + 40 > enemigos[i].getX() &&
                     playerY < enemigos[i].getY() + 30 && playerY + 25 > enemigos[i].getY()) {
                     juegoTerminado = true;
+                    
+                    if (!partidaRegistrada) {
+                        sistema.registrarPartida(piloto.getNombre(), nave.getTipoNave(), puntaje);
+                        partidaRegistrada = true;
+                    }
+                    
                     timer.stop();
                 }
 
-                // Si el enemigo sale de la pantalla por la izquierda, lo reubicamos a la derecha
                 if (enemigos[i].getX() < -30) {
                     enemigos[i].setX(800);
                 }
 
-                // 2. Colisión entre Proyectil y Enemigo
                 for (int j = 0; j < totalProyectiles; j++) {
                     if (proyectiles[j] != null && proyectiles[j].isActivo()) {
                         int pX = proyectiles[j].getX();
@@ -142,12 +191,40 @@ public class PanelJuego extends JPanel implements ActionListener, KeyListener {
 
                         if (pX > enemigos[i].getX() && pX < enemigos[i].getX() + 30 &&
                             pY > enemigos[i].getY() && pY < enemigos[i].getY() + 30) {
-                            // ¡Impacto! Desactivar proyectil y destruir/reciclar enemigo
                             proyectiles[j].setActivo(false);
-                            enemigos[i].setX(800); // Reaparece a la derecha
-                            puntaje += 50; // Sumar puntos por destruir enemigo
+                            enemigos[i].setX(800);
+                            puntaje += 50;
                         }
                     }
+                }
+            }
+        }
+
+        for (int i = 0; i < totalEspeciales; i++) {
+            if (especiales[i] != null && especiales[i].isActivo()) {
+                especiales[i].mover();
+
+                if (50 < especiales[i].getX() + 30 && 50 + 40 > especiales[i].getX() &&
+                    playerY < especiales[i].getY() + 30 && playerY + 25 > especiales[i].getY()) {
+                    
+                    String tipo = especiales[i].getTipo();
+                    if (tipo.equals("energia")) {
+                        puntaje += 150;
+                        for (int eIdx = 0; eIdx < totalEnemigos; eIdx++) {
+                            if (enemigos[eIdx] != null) enemigos[eIdx].setX(800);
+                        }
+                    } else if (tipo.equals("asteroide")) {
+                        tiempoRalentizado = 100;
+                    } else if (tipo.equals("capsula")) {
+                        puntaje += 10;
+                    }
+                    
+                    especiales[i].setActivo(false);
+                }
+
+                if (!especiales[i].isActivo()) {
+                    especiales[i] = new ObjetoEspecial(800 + random.nextInt(400), random.nextInt(450) + 40, 
+                        random.nextBoolean() ? (random.nextBoolean() ? "energia" : "capsula") : "asteroide");
                 }
             }
         }
@@ -157,7 +234,7 @@ public class PanelJuego extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (juegoTerminado) return;
+        if (juegoTerminado || tiempoRalentizado > 0) return;
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) arriba = true;
         if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) abajo = true;
