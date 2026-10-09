@@ -1,3 +1,20 @@
+## Información del proyecto
+
+**Universidad de San Carlos de Guatemala (USAC)**  
+**Facultad de Ingeniería**  
+**Escuela de Ciencias y Sistemas**
+
+**Curso:** Introducción a la Programación y Computación 1 (IPC1)  
+**Semestre:** Segundo Semestre 2026  
+**Proyecto:** Quetzal Space Defender
+### Datos del estudiante
+
+- **Nombre:** Astrid Alejandra Sanchez Pérez
+- **Carné:** 202503945
+- **Carrera:** Ingeniería en Ciencias y Sistemas
+
+---
+
 # MANUAL TÉCNICO COMPLETO - PROYECTO QUETZAL SPACE DEFENDER
 
 ## 1. INTRODUCCIÓN Y JUSTIFICACIÓN TÉCNICA
@@ -5,6 +22,9 @@
 El presente documento detalla la arquitectura, el diseño lógico, los patrones de programación, la gestión de estructuras de memoria y los algoritmos implementados en el desarrollo de la aplicación **Quetzal Space Defender**.
 
 Desarrollado en su totalidad en el lenguaje **Java**, este software cumple estrictamente con el paradigma de la **Programación Orientada a Objetos (POO)**. Su propósito fundamental es simular un videojuego interactivo de tipo arcade en dos dimensiones (2D), garantizando un rendimiento fluido, modularidad estricta y cumplimiento absoluto de las restricciones académicas, tales como la prohibición de utilizar la API de Colecciones (`Collections API`) y la implementación nativa de la persistencia de datos y generación de reportes mediante el paquete `java.io`.
+
+> ![Interfaz gráfica](Imagenes/Interfaz.png)
+> ![Menu principal](Imagenes/Menu.png)
 
 ## 2. ARQUITECTURA GENERAL DEL SISTEMA Y DIAGRAMA DE BLOQUES
 
@@ -18,8 +38,6 @@ El software se encuentra estructurado bajo un diseño desacoplado. Cada clase cu
 - **Capa de Persistencia Externa (`GeneradorReportes.java`):** Exporta los datos a un formato web interactivo con estilos modernos.
 
 > ![Diagrama de arquitectura o esquema de clases del proyecto en VS Code](Imagenes/Estructura_clases.png)
->
-> *Descripción sugerida para la imagen:* Esquema visual o captura del explorador de archivos de Visual Studio Code mostrando la organización modular de todas las clases del proyecto.
 
 ## 3. DESCRIPCIÓN PROFUNDA Y EXHAUSTIVA DE CADA CLASE
 
@@ -74,9 +92,8 @@ Estas clases modelan los objetos que interactúan en el plano cartesiano del jue
 - `VentanaJuego`: Extiende de `JFrame`, configurando las dimensiones fijas (`800x600`), el título dinámico y la operación de cierre.
 - `PanelJuego`: Extiende de `JPanel` e implementa las interfaces `ActionListener` y `KeyListener`. Es el componente más robusto, ya que gestiona el ciclo de vida del juego, la renderización gráfica por fotogramas, la captura de las teclas `W`, `S` y `Espacio`, y la evaluación de colisiones.
 
-> **[INSERTAR IMAGEN AQUÍ: Código fuente de PanelJuego o RegistroSistema en VS Code]**
->
-> *Descripción sugerida para la imagen:* Captura de pantalla mostrando fragmentos del código en Java, destacando los vectores estáticos y los métodos de actualización lógica.
+> ![Vectores estáticos y métodos lógicos](Imagenes/Panel_juegos.png)
+
 
 ## 4. GESTIÓN DE HILOS Y TIEMPOS (`Timer` de Swing)
 
@@ -123,3 +140,4 @@ La exportación de los datos almacenados en memoria hacia un medio físico exter
   ```
   Esto garantiza que Java cierre el archivo de manera obligatoria al terminar la ejecución, evitando fugas de memoria o bloqueos de acceso en el sistema operativo.
 - **Gráfica de Rendimiento CSS:** El archivo HTML resultante no solo muestra tablas tabuladas limpias, sino que incorpora contenedores estilizados con estilos CSS (`width: Xpx`) que transforman los puntajes numéricos en barras estadísticas visuales totalmente funcionales sin dependencias externas.
+> ![Reportes, tablas y gráfica](Imagenes/Reporte_HTML.png)

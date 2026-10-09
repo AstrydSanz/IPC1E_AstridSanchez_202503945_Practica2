@@ -1,3 +1,20 @@
+## Información del proyecto
+
+**Universidad de San Carlos de Guatemala (USAC)**  
+**Facultad de Ingeniería**  
+**Escuela de Ciencias y Sistemas**
+
+**Curso:** Introducción a la Programación y Computación 1 (IPC1)  
+**Semestre:** Segundo Semestre 2026  
+**Proyecto:** Quetzal Space Defender
+### Datos del estudiante
+
+- **Nombre:** Astrid Alejandra Sanchez Pérez
+- **Carné:** 202503945
+- **Carrera:** Ingeniería en Ciencias y Sistemas
+
+---
+
 # MANUAL DE USUARIO COMPLETO - PROYECTO QUETZAL SPACE DEFENDER
 
 ## 1. DESCRIPCIÓN GENERAL DE LA APLICACIÓN
@@ -6,9 +23,7 @@
 
 El usuario asume el rol operativo de una nave de defensa espacial. El objetivo principal de la simulación es maniobrar a través del espacio, esquivar obstáculos móviles, destruir naves enemigas mediante disparos láser y recolectar elementos especiales de bonificación para acumular la mayor cantidad de puntos posibles y posicionarse en la élite del historial del sistema.
 
-> **[INSERTAR IMAGEN AQUÍ: Captura de pantalla de la ventana del juego en ejecución]**
->
-> *Descripción sugerida para la imagen:* Pantalla principal del juego en pleno funcionamiento, mostrando la nave del jugador (en cian), los disparos láser (amarillos), enemigos (rojos) y el panel superior con los datos de puntaje.
+> ![Interfaz gráfica](Imagenes/Interfaz.png)
 
 ## 2. REQUISITOS TÉCNICOS PREVIOS
 
@@ -36,19 +51,23 @@ Sigue rigurosamente los siguientes pasos para poner en marcha el programa desde 
    java Main
    ```
 
-> **[INSERTAR IMAGEN AQUÍ: Captura de pantalla de la terminal mostrando la compilación exitosa y el menú principal]**
->
-> *Descripción sugerida para la imagen:* Ventana de comandos (CMD o terminal de VS Code) mostrando el menú interactivo con las opciones del 1 al 5 impresas en pantalla.
+![Menu Principal del Juego](Imagenes/Menu_1.png)
 
 ## 4. GUÍA DEL MENÚ PRINCIPAL Y SUS OPCIONES
 
 Al ejecutar exitosamente el programa, se desplegará en la consola un menú interactivo basado en opciones numéricas:
 
 - **1. Jugar:** Permite iniciar una simulación gráfica. Al seleccionarla, el sistema solicitará el carnet de un piloto previamente registrado. Validará su existencia y te pedirá elegir el modelo de nave y dificultad, abriendo de inmediato la ventana gráfica del juego.
+![Opcion 1](Imagenes/Menu_3.png)
 - **2. Crear / Registrar Piloto:** Opción obligatoria antes de jugar. Solicita al usuario ingresar su nombre completo y un número de carnet único, los cuales se almacenarán en el vector estático de control del sistema.
+![Opcion 2](Imagenes/Menu_2.png)
 - **3. Top de Puntajes (Historial):** Despliega en la consola un listado ordenado de mayor a menor puntaje basándose en las partidas jugadas, utilizando el algoritmo interno de ordenamiento.
+![Opcion 3](Imagenes/Menu_6.png)
 - **4. Generar Reporte HTML:** Ejecuta el motor de persistencia para exportar un archivo hipertextual completo llamado `Reporte_QuetzalSpaceDefender.html` en la carpeta del proyecto, el cual incluye tablas de usuarios y una gráfica de barras de puntajes.
+![Opcion 4](Imagenes/Menu_7.png)
+![Interfaz gráfica](Imagenes/Menu_8.png)
 - **5. Salir:** Finaliza de manera segura el ciclo de ejecución del programa liberando los recursos de consola.
+![Opcion 5](Imagenes/Menu_9.png)
 
 ## 5. CONTROLES DE OPERACIÓN EN LA VENTANA GRÁFICA
 
@@ -66,7 +85,6 @@ Durante tu travesía espacial en el simulador, interactuarás con diversos objet
 - **Núcleo de Energía (Círculos de color Verde):** Objeto especial de bonificación. Al recolectarlo, otorga **+150 puntos** y ejecuta una limpieza temporal de los enemigos visibles en pantalla.
 - **Asteroide (Bloques de color Gris):** Obstáculo especial hostil que, al ser interceptado, provoca un bloqueo temporal de los controles de movimiento de la nave durante 2 segundos.
 - **Cápsula de Suministro (Cuadrados de color Morado):** Elemento de aprovisionamiento que otorga **+10 puntos** adicionales al marcador general de la simulación.
-
-> **[INSERTAR IMAGEN AQUÍ: Captura de pantalla del reporte HTML abierto en un navegador web]**
->
-> *Descripción sugerida para la imagen:* Visualización del archivo `Reporte_QuetzalSpaceDefender.html` abierto en Google Chrome o Edge, mostrando el diseño moderno en modo oscuro, la tabla de registros y la gráfica de barras estadísticas.
+![Interfaz gráfica (Juego)](Imagenes/Menu_4.png)
+![Interfaz gráfica (Juego)](Imagenes/Menu_5.png)
+![Interfaz gráfica (HTML)](Imagenes/Menu_8.png)
