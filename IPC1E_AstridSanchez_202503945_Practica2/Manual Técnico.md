@@ -92,7 +92,7 @@ Estas clases modelan los objetos que interactúan en el plano cartesiano del jue
 - `VentanaJuego`: Extiende de `JFrame`, configurando las dimensiones fijas (`800x600`), el título dinámico y la operación de cierre.
 - `PanelJuego`: Extiende de `JPanel` e implementa las interfaces `ActionListener` y `KeyListener`. Es el componente más robusto, ya que gestiona el ciclo de vida del juego, la renderización gráfica por fotogramas, la captura de las teclas `W`, `S` y `Espacio`, y la evaluación de colisiones.
 
-> ![Vectores estáticos y métodos lógicos](Imagenes/Panel_juegos.png)
+> ![Vectores estáticos y métodos lógicos](Imagenes/Panel_juego.png)
 
 
 ## 4. GESTIÓN DE HILOS Y TIEMPOS (`Timer` de Swing)
